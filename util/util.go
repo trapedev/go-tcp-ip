@@ -1,6 +1,7 @@
 package util
 
 import (
+	"encoding/binary"
 	"fmt"
 	"net"
 	"reflect"
@@ -46,6 +47,11 @@ func GetLocalUIpAddress(ifname string) (LocalAddressInfo, error) {
 	return localif, nil
 }
 
+func Checksum(sum uint) []byte {
+	val := sum - (sum>>16)<<16 + (sum >> 16) ^ 0xffff
+	return UintTo2byte(uint16(val))
+}
+
 func ToByteArr(value any) []byte {
 	rv := reflect.ValueOf(value)
 	var arr []byte
@@ -62,4 +68,42 @@ func PrintByteArr(arr []byte) string {
 		str += fmt.Sprintf("%x ", v)
 	}
 	return str
+}
+
+func SumByteArr(arr []byte) uint {
+	var sum uint
+	for i := 0; i < len(arr); i++ {
+		if i%2 == 0 {
+			sum += uint(binary.BigEndian.Uint16(arr[i:]))
+		}
+	}
+	return sum
+}
+
+func UintTo2byte(data uint16) []byte {
+	b := make([]byte, 2)
+	binary.BigEndian.PutUint16(b, data)
+	return b
+}
+
+func UintTo3byte(data uint32) []byte {
+	b := make([]byte, 3)
+	binary.BigEndian.PutUint32(b, data)
+	return b
+}
+
+func UintTo4byte(data uint32) []byte {
+	b := make([]byte, 4)
+	binary.BigEndian.PutUint32(b, data)
+	return b
+}
+
+func ToByteLen(value any) uint16 {
+	rv := reflect.ValueOf(value)
+	var arr []byte
+	for i := 0; i < rv.NumField(); i++ {
+		b := rv.Field(i).Interface().([]byte)
+		arr = append(arr, b...)
+	}
+	return uint16(len(arr))
 }

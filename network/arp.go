@@ -69,7 +69,7 @@ func (*Arp) Send(ifindex int, packet []byte) Arp {
 	}
 	sendfd, err := syscall.Socket(syscall.AF_PACKET, syscall.SOCK_RAW, int(convertShort(syscall.ETH_P_ALL)))
 	if err != nil {
-		log.Fatalf("create sendfd err : %v\n", err)
+		log.Fatalf("create arp sendfd err : %v\n", err)
 	}
 	defer syscall.Close(sendfd)
 	err = syscall.Sendto(sendfd, packet, 0, &address)
@@ -82,7 +82,7 @@ func (*Arp) Send(ifindex int, packet []byte) Arp {
 		if err != nil {
 			log.Fatalf("read err : %v", err)
 		}
-		fmt.Printf("recvBuf:%v\n", recvBuf)
+		fmt.Printf("recvBuf:\n%v\n", recvBuf)
 		if recvBuf[12] == 0x08 && recvBuf[13] == 0x06 {
 			if recvBuf[20] == 0x00 && recvBuf[21] == 0x02 {
 				return parseArpPacket(recvBuf[14:])
