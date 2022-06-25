@@ -92,7 +92,6 @@ func (*Arp) Send(ifindex int, packet []byte) Arp {
 }
 
 func parseArpPacket(packet []byte) Arp {
-	fmt.Println("通過１０")
 	return Arp{
 		HardwareType:     []byte{packet[0], packet[1]},
 		ProtocolType:     []byte{packet[2], packet[3]},
