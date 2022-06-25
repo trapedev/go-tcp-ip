@@ -32,7 +32,6 @@ func GetLocalUIpAddress(ifname string) (LocalAddressInfo, error) {
 	}
 	localif.LocalMacAddress = nif.HardwareAddr
 	localif.Index = nif.Index
-
 	addrs, err := nif.Addrs()
 	if err != nil {
 		return localif, err

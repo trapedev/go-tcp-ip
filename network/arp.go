@@ -72,27 +72,27 @@ func (*Arp) Send(ifindex int, packet []byte) Arp {
 		log.Fatalf("create sendfd err : %v\n", err)
 	}
 	defer syscall.Close(sendfd)
-
 	err = syscall.Sendto(sendfd, packet, 0, &address)
 	if err != nil {
 		log.Fatalf("Send to err : %v", err)
 	}
-
 	for {
 		recvBuf := make([]byte, 80)
 		_, _, err := syscall.Recvfrom(sendfd, recvBuf, 0)
 		if err != nil {
 			log.Fatalf("read err : %v", err)
-			if recvBuf[12] == 0x08 && recvBuf[13] == 0x06 {
-				if recvBuf[20] == 0x00 && recvBuf[21] == 0x02 {
-					return parseArpPacket(recvBuf[14:])
-				}
+		}
+		fmt.Printf("recvBuf:%v\n", recvBuf)
+		if recvBuf[12] == 0x08 && recvBuf[13] == 0x06 {
+			if recvBuf[20] == 0x00 && recvBuf[21] == 0x02 {
+				return parseArpPacket(recvBuf[14:])
 			}
 		}
 	}
 }
 
 func parseArpPacket(packet []byte) Arp {
+	fmt.Println("通過１０")
 	return Arp{
 		HardwareType:     []byte{packet[0], packet[1]},
 		ProtocolType:     []byte{packet[2], packet[3]},
@@ -112,7 +112,7 @@ func SendArp(ifname string) {
 		log.Fatalf("could not get local ip address -> err:%v", err)
 	}
 	ethernet := datalink.NewEthernet([]byte{0xff, 0xff, 0xff, 0xff, 0xff, 0xff}, localif.LocalMacAddress, "ARP")
-	arpReq := NewArpRequest(localif, "172.22.71.61")
+	arpReq := NewArpRequest(localif, "172.22.79.255")
 
 	var sendArp []byte
 	sendArp = append(sendArp, util.ToByteArr(ethernet)...)
