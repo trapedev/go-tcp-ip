@@ -47,11 +47,11 @@ type IPHeader struct {
 	TTL                    []byte
 	Protocol               []byte
 	HeaderChecksum         []byte
-	SourceIPAddr           []byte
-	DestinationIPAddr      []byte
+	SrcIPAddr              []byte
+	DstIPAddr              []byte
 }
 
-func NewIPHeader(sourceIP, destinationIp []byte, protocol string) IPHeader {
+func NewIPHeader(srcIP, dstIp []byte, protocol string) IPHeader {
 	ip := IPHeader{
 		VersionAndHeaderLength: []byte{0x45},
 		ServiceType:            []byte{0x00},
@@ -61,8 +61,8 @@ func NewIPHeader(sourceIP, destinationIp []byte, protocol string) IPHeader {
 		TTL:                    []byte{0x40},
 		Protocol:               ProtocolTypeMap[protocol],
 		HeaderChecksum:         []byte{0x00, 0x00},
-		SourceIPAddr:           sourceIP,
-		DestinationIPAddr:      destinationIp,
+		SrcIPAddr:              srcIP,
+		DstIPAddr:              dstIp,
 	}
 	return ip
 }
